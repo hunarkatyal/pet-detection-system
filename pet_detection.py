@@ -721,9 +721,9 @@ def run_pet_detection():
         # Add hardcoded Twilio credentials if using SMS
         if notification_type == 'sms':
             # Hardcoded Twilio credentials
-            notification_settings['twilio_account_sid'] = 'ACa3621c80f2c9d4e6481bd9683cd4e33a'
-            notification_settings['twilio_auth_token'] = '352fcf06ce240b489f1de5cbd138854f'
-            notification_settings['twilio_number'] = '+19787339575'
+            notification_settings['twilio_account_sid'] = ''
+            notification_settings['twilio_auth_token'] = ''
+            notification_settings['twilio_number'] = ''
             print("\nTwilio credentials have been configured automatically")
 
         print(f"\nNotifications will be sent to {phone_number} via {notification_type.upper()}")
