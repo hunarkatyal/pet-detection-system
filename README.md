@@ -1,217 +1,280 @@
-# 🐾 Pet Monitoring System using YOLOv8
+# 🐾 Pet Detection System using YOLOv5
 
-A real-time pet monitoring system that uses YOLOv8 object detection to track pets and send alerts when they cross predefined boundary lines. Perfect for home safety, keeping pets away from restricted areas, or monitoring their activity indoors.
+A comprehensive real-time pet detection system that uses YOLOv5 object detection to monitor pets and send notifications when they cross predefined boundary lines. Features include movement heatmap generation, customizable processing speeds, and multi-channel notifications (SMS/WhatsApp).
 
 ## 📋 Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
-- [Demo](#demo)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Project Structure](#project-structure)
-- [How It Works](#how-it-works)
-- [Development Status](#development-status)
-- [Use Cases](#use-cases)
-- [Future Enhancements](#future-enhancements)
+- [Configuration](#configuration)
+- [Notifications](#notifications)
+- [Output Files](#output-files)
+- [Performance Optimization](#performance-optimization)
+- [Technical Details](#technical-details)
+- [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
-- [Team](#team)
 - [License](#license)
 
 ## 🎯 Overview
 
-The Pet Monitoring System is designed to provide real-time surveillance of pets using computer vision. By leveraging YOLOv8's powerful object detection capabilities, the system can detect pets in video feeds and trigger alerts when they cross user-defined virtual boundaries.
+The Pet Detection System leverages YOLOv5's powerful object detection capabilities to provide comprehensive pet monitoring with the following key features:
 
-### Key Capabilities
-- ✅ Real-time pet detection and tracking
-- ✅ Virtual boundary line crossing detection
-- ✅ Instant alert notifications
-- ✅ Modular and extensible architecture
-- ✅ Support for webcam and video file input
+- **Real-time Detection**: Accurate detection of cats and dogs in video feeds
+- **Line Crossing Alerts**: Configurable virtual boundaries with instant notifications
+- **Movement Heatmaps**: Visual analysis of pet movement patterns
+- **Multi-channel Notifications**: SMS and WhatsApp alerts via Twilio and PyWhatKit
+- **Performance Optimization**: Configurable frame processing for speed vs accuracy balance
+- **Comprehensive Statistics**: Detailed processing and detection analytics
 
 ## 🚀 Features
 
 ### Current Features
-- **Real-time Detection**: Uses YOLOv8 for accurate pet detection in live video streams
-- **Boundary Monitoring**: Configurable virtual lines to monitor restricted areas
-- **Alert System**: Immediate notifications when pets cross predefined boundaries
-- **Multi-pet Support**: Can track multiple pets simultaneously
-- **Flexible Input**: Works with webcam feeds or pre-recorded videos
+- ✅ **YOLOv5 Integration**: State-of-the-art object detection for pets
+- ✅ **Smart Frame Processing**: Configurable frame skipping for optimal performance
+- ✅ **Line Crossing Detection**: Customizable virtual boundaries
+- ✅ **Real-time Notifications**: SMS via Twilio and WhatsApp via PyWhatKit
+- ✅ **Movement Heatmaps**: Visual representation of pet activity patterns
+- ✅ **Progress Tracking**: Real-time processing progress with ETA calculations
+- ✅ **Comprehensive Statistics**: Detailed analytics and performance metrics
+- ✅ **Flexible Input**: Support for various video formats (MP4, AVI, MOV, MKV)
 
-### Planned Features
-- 🌙 Low-light condition optimization
-- 📈 Advanced behavior analysis
-- 🎥 Multi-camera integration
-- 📱 Mobile app notifications
-- 🔊 Audio alert system
-- 📊 Activity dashboard
+### Advanced Capabilities
+- 🎯 **Adaptive Processing**: Choose between accuracy (every frame) or speed (frame skipping)
+- 📊 **Movement Analytics**: Track pet positions and generate heatmaps
+- 🔔 **Smart Notifications**: Throttled alerts to prevent spam
+- 📈 **Performance Metrics**: FPS tracking and processing time analysis
+- 🎨 **Visual Feedback**: Real-time bounding boxes and confidence scores
 
 ## 🛠️ Installation
 
 ### Prerequisites
-- Python 3.8 or higher
+- Python 3.7 or higher
 - OpenCV
-- YOLOv8 (Ultralytics)
-- NumPy
+- PyTorch
+- Required Python packages (see requirements below)
+
+### Dependencies Installation
+
+```bash
+# Core dependencies
+pip install torch torchvision torchaudio
+pip install opencv-python-headless
+pip install pandas matplotlib seaborn
+pip install moviepy
+
+# Notification dependencies
+pip install twilio          # For SMS notifications
+pip install pywhatkit       # For WhatsApp notifications
+
+# YOLOv5 setup (automatically handled by the script)
+# The script will clone and set up YOLOv5 automatically
+```
 
 ### Setup
 
-1. **Clone the repository**
+1. **Download the script**
 ```bash
-git clone https://github.com/hunarkatyak/pet-monitoring-system.git
-cd pet-monitoring-system
+# Save the pet_detection.py file to your desired directory
 ```
 
-2. **Install dependencies**
+2. **Prepare your video files**
 ```bash
-pip install -r requirements.txt
+# Place your video files in the same directory as the script
+# Supported formats: MP4, AVI, MOV, MKV
 ```
 
-3. **Download YOLOv8 weights**
+3. **Configure notifications (optional)**
 ```bash
-# The system will automatically download YOLOv8 weights on first run
-# Or manually download from Ultralytics
+# For SMS: Set up Twilio account (credentials are hardcoded in the script)
+# For WhatsApp: Ensure PyWhatKit is installed and working
 ```
 
 ## 📖 Usage
 
 ### Basic Usage
 
-1. **Run with webcam**
+1. **Run the detection system**
 ```bash
-python main.py --source 0
+python pet_detection.py
 ```
 
-2. **Run with video file**
-```bash
-python main.py --source path/to/video.mp4
-```
+2. **Follow the interactive prompts**
+   - Select your video file
+   - Choose processing mode (every frame vs frame skipping)
+   - Configure line crossing detection
+   - Set up notifications (optional)
 
-3. **Configure boundary line**
-```bash
-python main.py --source 0 --line-coords 100,200,400,200
-```
+### Processing Modes
+
+#### Maximum Accuracy Mode
+- Processes every frame
+- Highest detection accuracy
+- Slower processing speed
+- Best for critical monitoring
+
+#### Speed Optimized Mode
+- Processes every nth frame (configurable)
+- Faster processing
+- May miss some detections
+- Good for general monitoring
 
 ### Configuration Options
 
-- `--source`: Input source (0 for webcam, or path to video file)
-- `--line-coords`: Boundary line coordinates (x1,y1,x2,y2)
-- `--confidence`: Detection confidence threshold (default: 0.5)
-- `--output`: Save output video path
+#### Line Crossing Detection
+- **Default**: Horizontal line at video center
+- **Custom**: Define line coordinates as percentages
+- **Format**: Start point (x1%, y1%) to end point (x2%, y2%)
 
-## 📁 Project Structure
+#### Frame Processing
+- **Frame Skip 1**: Process every frame (maximum accuracy)
+- **Frame Skip 2-10**: Process every nth frame (faster)
+- **Recommendation**: Use 2-3 for balanced performance
 
+## 🔔 Notifications
+
+### SMS Notifications (Twilio)
+- **Pre-configured**: Twilio credentials are hardcoded
+- **Setup**: Only requires your phone number
+- **Format**: Include country code (+1234567890)
+- **Rate Limiting**: Minimum 60 seconds between notifications
+
+### WhatsApp Notifications (PyWhatKit)
+- **Requirements**: PyWhatKit must be installed and working
+- **Setup**: Requires phone number and WhatsApp Web access
+- **Scheduling**: Automatically schedules messages
+- **Rate Limiting**: Built-in throttling to prevent spam
+
+## 📁 Output Files
+
+The system generates several output files:
+
+### 1. Processed Video
+- **Filename**: `pet_detection_output.mp4`
+- **Content**: Original video with detection overlays
+- **Features**: Bounding boxes, confidence scores, frame counters
+
+### 2. Movement Heatmap
+- **Filename**: `pet_movement_heatmap.jpg`
+- **Content**: Visual representation of pet movement patterns
+- **Features**: Color-coded activity intensity, timestamps
+
+### 3. Statistics Output
+- **Format**: Console display and can be logged
+- **Content**: Comprehensive processing and detection metrics
+
+## ⚡ Performance Optimization
+
+### Processing Speed Tips
+1. **Frame Skipping**: Use frame skip 2-3 for 2-3x speed improvement
+2. **Video Resolution**: Lower resolution videos process faster
+3. **System Resources**: Ensure adequate RAM and CPU power
+4. **GPU Support**: PyTorch will use GPU if available
+
+### Accuracy vs Speed Balance
+- **High Accuracy**: Frame skip = 1, processes every frame
+- **Balanced**: Frame skip = 2-3, good speed with minimal accuracy loss
+- **Fast Processing**: Frame skip = 5-10, fastest but may miss events
+
+## 🔧 Technical Details
+
+### Detection Classes
+- **Cat**: COCO class index 15
+- **Dog**: COCO class index 16
+- **Confidence**: Adjustable threshold (default optimized)
+
+### Line Crossing Algorithm
+- **Method**: Geometric distance calculation
+- **Threshold**: Configurable sensitivity
+- **Tracking**: Center-bottom point of bounding box
+
+### Heatmap Generation
+- **Method**: Gaussian blur intensity mapping
+- **Radius**: 20-pixel heat area per detection
+- **Normalization**: Intensity scaled to 0-1 range
+- **Visualization**: OpenCV COLORMAP_JET
+
+## 📊 Statistics and Analytics
+
+The system provides comprehensive statistics:
+
+### Frame Processing
+- Total frames in video
+- Frames processed (with skip ratio)
+- Processing time per frame
+- Average FPS achieved
+
+### Detection Metrics
+- Frames with pets detected
+- Separate counts for cats and dogs
+- Pet detection rate percentage
+- Line crossing events
+
+### Performance Metrics
+- Total processing time
+- Average detection time
+- Processing efficiency ratio
+- Notification count
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+#### Model Loading Errors
+```bash
+# If YOLOv5 fails to load, try:
+git clone https://github.com/ultralytics/yolov5
+pip install -r yolov5/requirements.txt
 ```
-Pet-Monitoring-System/
-│
-├── model/               # YOLOv8 trained weights (.pt file)
-├── utils/               # Custom scripts (e.g., line_crossing.py)
-├── data/                # Sample input videos or image frames
-├── output/              # Saved output videos with detection overlay
-├── notebooks/           # Google Colab or Jupyter Notebooks
-├── main.py              # Main script for running the system
-├── requirements.txt     # Python dependencies
-├── README.md            # Project documentation
-└── LICENSE              # License file
+
+#### Video Processing Errors
+```bash
+# Check video file format and integrity
+# Ensure OpenCV can read the file
 ```
 
-## 🔧 How It Works
+#### Notification Failures
+```bash
+# SMS: Verify Twilio credentials and phone number format
+# WhatsApp: Ensure PyWhatKit is properly installed
+```
 
-### 1. Pet Detection
-- YOLOv8 processes each frame to detect pets (dogs, cats, etc.)
-- Returns bounding boxes with confidence scores for detected pets
-
-### 2. Boundary Monitoring
-- User-defined virtual lines are drawn on the video feed
-- System tracks the center point of each pet's bounding box
-- Monitors movement relative to the boundary line
-
-### 3. Alert System
-- When a pet's center point crosses the boundary line, an alert is triggered
-- Notifications can be visual, audio, or sent to external systems
-
-### 4. Real-time Processing
-- OpenCV handles frame capture and processing
-- Continuous monitoring with minimal latency
-
-## 📊 Development Status
-
-| Feature | Status |
-|---------|--------|
-| YOLOv8 detection | ✅ Complete |
-| Line-crossing detection | ✅ Working |
-| Alert/Notification trigger | ✅ Basic alert |
-| MATLAB testing | ⏳ Upcoming |
-| Low-light handling | ⏳ Planned |
-| Behavior analysis | ⏳ Planned |
-| Multi-camera support | ⏳ Planned |
-
-## 🎯 Use Cases
-
-- **Home Safety**: Prevent pets from entering restricted areas (kitchen, balconies)
-- **Stair Safety**: Alert when pets approach stairs or dangerous areas
-- **Door Monitoring**: Track pets entering/exiting rooms
-- **Smart Homes**: Integration with home automation systems
-- **Pet Care Centers**: Monitor multiple pets in shelters or daycare
-- **Behavioral Studies**: Foundation for advanced pet behavior analysis
-
-## 🚀 Future Enhancements
-
-### Short-term Goals
-- [ ] Sound alert integration
-- [ ] Mobile app notifications
-- [ ] GUI for boundary configuration
-- [ ] Performance optimization for low-end devices
-
-### Long-term Vision
-- [ ] AI-powered behavior analysis
-- [ ] Multi-camera surveillance system
-- [ ] Cloud-based monitoring dashboard
-- [ ] Integration with smart home platforms
-- [ ] Advanced analytics and reporting
+### Performance Issues
+- **Slow Processing**: Increase frame skip value
+- **High Memory Usage**: Process shorter video segments
+- **Low Detection Rate**: Reduce frame skip value
 
 ## 🤝 Contributing
 
-We welcome contributions to improve the Pet Monitoring System! Here's how you can help:
+Contributions are welcome! Areas for improvement:
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Areas for Contribution
-- Performance optimization
-- New detection algorithms
-- UI/UX improvements
-- Documentation enhancements
-- Bug fixes and testing
-
-## 👥 Team
-
-- **Hunar Katyal** - Object detection & system architecture
-- **Piyush** - Problem statement & solution analysis
-- **Madhav** - Project updates & future development
+- Additional notification channels
+- Advanced behavior analysis
+- Multi-camera support
+- Real-time webcam processing
+- Mobile app integration
+- Cloud deployment options
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
-- [Ultralytics YOLOv8](https://github.com/ultralytics/ultralytics) for the object detection model
+- [Ultralytics YOLOv5](https://github.com/ultralytics/yolov5) for the object detection model
+- [Twilio](https://www.twilio.com/) for SMS notification services
+- [PyWhatKit](https://github.com/Ankit404butfound/PyWhatKit) for WhatsApp integration
 - OpenCV community for computer vision tools
-- All contributors and testers
 
 ## 📞 Contact
 
-For questions, suggestions, or collaboration opportunities, please reach out:
-
-- Project Issues: [GitHub Issues](https://github.com/yourusername/pet-monitoring-system/issues)
-- Email: [katyalhunar921@gmail.com]
+For questions, issues, or contributions:
+- **Email**: [katyalhunar921@gmail.com]
+- **GitHub Issues**: For bug reports and feature requests
 
 ---
 
-⭐ If you find this project helpful, please give it a star on GitHub!
+⭐ **Note**: This system is designed for educational and home monitoring purposes. Ensure compliance with local privacy laws when deploying in shared or public spaces.
 
 Made with ❤️ for pet safety and smart home automation.
